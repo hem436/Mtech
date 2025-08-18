@@ -1,0 +1,125 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{fullpage}
+
+\begin{document}
+
+\title{Median-of-Medians Selection: Deterministic Worst-Case \(O(n)\)}
+\author{}
+\date{}
+\maketitle
+
+\section*{Problem}
+Given an array \(A\) of \(n\) distinct elements and an integer \(k\) with \(1 \le k \le n\), find the \(k\)-th smallest element in \(A\) in deterministic worst-case linear time.
+
+\section*{Algorithm (Median-of-Medians)}
+\begin{algorithm}
+\caption{Select$(A,k)$ — deterministic selection (median-of-medians)}
+\begin{algorithmic}[1]
+\Require array $A$ of size $n$, integer $k$ with $1\le k\le n$
+\If{$n \le 5$}
+  \State Sort $A$ and \Return the $k$-th smallest element
+\EndIf
+\State Partition $A$ into $\lceil n/5\rceil$ groups of size at most $5$
+\For{each group}
+  \State find the median of the group (by sorting the group of size $\le 5$)
+\EndFor
+\State Let $M$ be the array of these medians (size $m=\lceil n/5\rceil$)
+\State $p \gets$ Select$(M,\lceil m/2\rceil)$ \Comment{the median of medians}
+\State Partition $A$ into $A_{<p}, \{p\}, A_{>p}$ (elements less than, equal to, and greater than $p$)
+\If{$k \le |A_{<p}|$}
+  \State \Return Select$(A_{<p},k)$
+\ElsIf{$k = |A_{<p}|+1$}
+  \State \Return $p$
+\Else
+  \State \Return Select$(A_{>p}, k-|A_{<p}|-1)$
+\EndIf
+\end{algorithmic}
+\end{algorithm}
+
+\section*{Key Lemma (Quality of the pivot \(p\))}
+Let \(n\) be the size of \(A\). After grouping into groups of at most 5 and taking each group's median, and then taking \(p\) as the median of those medians, the pivot \(p\) satisfies:
+
+\[
+\text{at least } \frac{3n}{10}\ \text{elements of }A\ \text{are } \le p
+\quad\text{and}\quad
+\text{at least } \frac{3n}{10}\ \text{elements of }A\ \text{are } \ge p.
+\]
+
+Thus, after partitioning around \(p\), both sides have size at most \(\tfrac{7n}{10}\).
+
+\begin{proof}
+Partition \(A\) into $\lfloor n/5\rfloor$ full groups of 5 and possibly one smaller group. Consider only the full groups (ignore the smaller remainder group if any) — there are at least $\lfloor n/5\rfloor$ such groups.
+
+For each full group of 5, after sorting that group, its median is the 3rd smallest element in the group. If a group's median is $\le p$, then in that group at least 3 elements are $\le$ that median (hence $\le p$). Similarly, if a group's median is $\ge p$, in that group at least 3 elements are $\ge$ that median (hence $\ge p$).
+
+Since $p$ is the median of the medians, at least half of the medians are $\le p$ and at least half are $\ge p$. Consider the medians that are $\le p$: there are at least $\lceil (\lfloor n/5\rfloor)/2\rceil$ such groups, and each contributes at least 3 elements that are $\le p$. Therefore the number of elements $\le p$ is at least
+
+\[
+3\cdot \left\lceil\frac{\lfloor n/5\rfloor}{2}\right\rceil \ge 3\cdot\left(\frac{n/5 - 1}{2}\right) = \frac{3n}{10} - \frac{3}{2}.
+\]
+
+For sufficiently large \(n\), this is at least \(3n/10 - O(1)\). A symmetric argument gives the same lower bound for elements $\ge p$. Concretely, for $n\ge 5$ one can show that at least $\lfloor 3n/10\rfloor$ elements lie on each side. Hence at most $n - \lfloor 3n/10\rfloor - 1 \le 7n/10$ elements can lie strictly on one side of $p$. Thus each partition side has size at most $\tfrac{7n}{10}$.
+\end{proof}
+
+\section*{Recurrence for the running time}
+Let \(T(n)\) denote the worst-case time to select the \(k\)-th smallest element from \(n\) elements using this algorithm. Steps and their costs:
+
+\begin{itemize}
+  \item Partition into groups of size at most 5 and find each group's median: each group of size $\le 5$ is sorted in $O(1)$ time, so total $O(n)$.
+  \item Recursively select the median of medians from the $m=\lceil n/5\rceil$ medians: cost $T(n/5)$ (up to constants).
+  \item Partition around the pivot $p$: $O(n)$.
+  \item Recurse on at most $7n/10$ elements (by the lemma).
+\end{itemize}
+
+Thus we obtain the recurrence (for sufficiently large \(n\)):
+
+\[
+T(n) \le T\!\left(\frac{n}{5}\right) + T\!\left(\frac{7n}{10}\right) + cn
+\]
+
+for some constant \(c>0\).
+
+\section*{Solving the recurrence}
+We prove \(T(n) \le C n\) for some constant \(C\) and all \(n\) by induction. Choose \(C\) large enough so that base cases (small \(n\)) hold; we focus on the inductive step.
+
+Assume the induction hypothesis holds for all smaller sizes. Then:
+
+\[
+\begin{aligned}
+T(n)
+&\le C\cdot\frac{n}{5} + C\cdot\frac{7n}{10} + cn \\
+&= C\left(\frac{1}{5} + \frac{7}{10}\right)n + cn \\
+&= C\left(\frac{2}{10} + \frac{7}{10}\right)n + cn \\
+&= C\left(\frac{9}{10}\right)n + cn.
+\end{aligned}
+\]
+
+To make \(T(n) \le Cn\), it suffices that
+
+\[
+C\cdot\frac{9}{10} n + c n \le C n
+\quad\Longleftrightarrow\quad
+\left(1 - \frac{9}{10}\right)C \ge c
+\quad\Longleftrightarrow\quad
+\frac{1}{10}C \ge c
+\quad\Longleftrightarrow\quad
+C \ge 10c.
+\]
+
+So pick \(C = \max\{10c, C_0\}\) where \(C_0\) handles base cases. Then by induction \(T(n) \le Cn\) for all \(n\). Hence \(T(n)=O(n)\).
+
+(One may also solve the recurrence more formally using the recursion tree — the tree levels shrink geometrically and the sums of costs form a convergent geometric series bounded by a constant times \(n\).)
+
+\section*{Conclusion}
+The median-of-medians pivot guarantees that each recursive call reduces the problem size by a constant fraction in the worst case (no more than \(7n/10\) remain on the larger side). The recurrence
+
+\[
+T(n) \le T(n/5) + T(7n/10) + O(n)
+\]
+
+resolves to \(T(n) = O(n)\). Therefore the deterministic selection algorithm (median-of-medians) runs in linear time in the worst case.
+
+\end{document}
