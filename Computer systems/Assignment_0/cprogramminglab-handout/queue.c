@@ -15,7 +15,7 @@
 
 #include "queue.h"
 #include "harness.h"
-
+#include<stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -71,7 +71,7 @@ void queue_free(queue_t *q) {
 bool queue_insert_head(queue_t *q, const char *s) {
     /* What should you do if the q is NULL? */
     if (q == NULL) {
-        printf("queue is null");
+        // printf("queue is null");
         return false;
     }
     list_ele_t *newh = malloc(sizeof(list_ele_t));
@@ -80,7 +80,7 @@ bool queue_insert_head(queue_t *q, const char *s) {
     size_t len = strlen(s) + 1;
     char *string = malloc(len);
     if (newh == NULL || string == NULL) {
-        printf("memory allocated is null");
+        // printf("malloc failed\n");
         if (newh) free(newh);
         if (string) free(string);
         return false;
@@ -111,7 +111,7 @@ bool queue_insert_tail(queue_t *q, const char *s) {
     /* You need to write the complete code for this function */
     /* Remember: It should operate in O(1) time */
     if (q == NULL) {
-        printf("q is null");
+        // printf("q is null");
         return false;
     }
     /* What should you do if the q is NULL? */
@@ -121,7 +121,7 @@ bool queue_insert_tail(queue_t *q, const char *s) {
     size_t len = strlen(s) + 1;
     char *string = malloc(len);
     if (newt == NULL || string == NULL) {
-        printf("memory allocated is null");
+        // printf("malloc failed\n");
         if (newt) free(newt);
         if (string) free(string);
         return false;
@@ -163,24 +163,22 @@ bool queue_remove_head(queue_t *q, char *buf, size_t bufsize) {
         return false;
     list_ele_t *tempNxt = q->head->next;
 
-    // copy buffer
-    size_t range =
-        strlen(q->head->value) < bufsize-1 ? strlen(q->head->value) : bufsize-1;
-    for (size_t i = 0; i <= range; i++) {
-        if (i == bufsize-1) {
-            buf[i] = '\0';
-        } else {
-            buf[i] = q->head->value[i];
-        }
+    // copy buffer if buf exits traces 09 robust 
+    if (buf && bufsize > 0) {
+        strncpy(buf, q->head->value, bufsize - 1);
+        buf[bufsize - 1] = '\0';
     }
-
     free(q->head->value);
     free(q->head);
     // move to next element;
     if (tempNxt != NULL) {
         q->head = tempNxt;
+        if (q->head->next == NULL) {
+            q->tail = q->head;
+        }
     } else {
         q->head = NULL;
+        q->tail = NULL;
     }
     q->size -= 1;
     return true;
