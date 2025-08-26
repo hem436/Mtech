@@ -98,12 +98,9 @@ class DecisionTree:
                     return DecisionTree.treeNode(value=y.mode()[0], n_samples=len(y))
                 left_node = self._build_tree(X[left_mask], y[left_mask], features, depth+1)
                 right_node = self._build_tree(X[right_mask], y[right_mask], features, depth+1)
-
                 return DecisionTree.treeNode(attribute=best_attr, threshold=threshold, left=left_node,\
                                               right=right_node, value=y.value_counts().to_dict(), n_samples=len(y),ig=ig)
             else:
-                # print("2nd: {features}")
-
                 left_mask = X[best_attr] == 1
                 right_mask = X[best_attr] == 0
                 if left_mask.sum() == 0 or right_mask.sum() == 0:
@@ -137,8 +134,6 @@ class DecisionTree:
  
 
         
-
-
     def predict(self, X: pd.DataFrame) -> pd.Series:
         """
         Funtion to run the decision tree on test inputs
@@ -174,8 +169,6 @@ class DecisionTree:
     def plot(self) -> None:
         """
         Function to plot the tree
-
-
         Output Example:
         ?(X1 > 4)
             Y: ?(X2 > 7)
@@ -195,13 +188,10 @@ class DecisionTree:
                 tag = "N: "
             else:
                 tag = ""
-
             connector = "├── " if is_left and not is_root else ("└── " if not is_left and not is_root else "")
-
             if node is None:
                 print(prefix + connector + tag + "[None]")
                 return
-
             if getattr(node, 'is_leaf', False):
                 print(prefix + connector + tag + f"Leaf | Value: {node.value} | Samples: {node.n_samples}")
             else:
@@ -209,7 +199,6 @@ class DecisionTree:
                     print(prefix + connector + tag + f"?({node.attribute} <= {node.threshold}) | IG: {round(node.ig,4)} | Samples: {node.n_samples}")
                 else:
                     print(prefix + connector + tag + f"?({node.attribute})| IG: {round(node.ig,4)} | Samples: {node.n_samples}")
-
                 child_prefix = prefix + ("|   " if is_left and not is_root else "    ")
                 _plot_tree(node.left, child_prefix, branch="Y", is_left=True, is_root=False)
                 _plot_tree(node.right, child_prefix, branch="N", is_left=False, is_root=False)

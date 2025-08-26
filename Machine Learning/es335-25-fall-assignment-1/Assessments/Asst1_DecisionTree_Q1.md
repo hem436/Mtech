@@ -183,23 +183,4 @@ RMSE:  0.5944858156901102
 MAE:  0.48611654327295073
 ```
 
-## Performance on generated dataset
-We generated the dataset using the following code:
 
-```python
-from sklearn.datasets import make_classification
-X, y = make_classification(
-    n_features=2, n_redundant=0, n_informative=2, random_state=1, n_clusters_per_class=2, class_sep=0.5)
-
-# For plotting
-import matplotlib.pyplot as plt
-plt.scatter(X[:, 0], X[:, 1], c=y)
-```
-
-### Results
-- The dataset was split into 70% training and 30% testing.
-- Accuracy, per-class precision, and recall were calculated using the implemented decision tree.
-
-## Cross-Validation
-- 5-fold cross-validation was performed.
-- Nested cross-validation was used to find the optimum depth of the tree.

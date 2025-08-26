@@ -83,15 +83,24 @@ def plot_time_complexity(N_values: list[int], M_values: list[int], fit_times: np
 
 
 
-# Discrete Input and Discrete/Real Output
 N_values = [20,30,40,50]
-M_values = [5,10]
-tasks = ['classification', 'regression']
-for task in tasks:
+M_values = [5,10,15,20]
+def run_experiments(task: str, percent_real=0.5):
     if task == 'classification':
         criterion = 'gini_index'
     else:
         criterion = 'mse'
-    fit_times, predict_times = calculate_time_complexity(N_values, M_values, task, criterion,percent_real=0.0)
+    fit_times, predict_times = calculate_time_complexity(N_values, M_values, task, criterion,percent_real=percent_real)
     plot_time_complexity(N_values, M_values, fit_times, predict_times, task, criterion)
+
+# Discrete input Discrete output
+run_experiments('classification',0.0)
+# Discrete input Real output
+run_experiments('regression',0.0)
+# Real input Discrete output
+run_experiments('classification',1.0)
+# Real input Real output
+run_experiments('regression',1.0)
+
+
 
