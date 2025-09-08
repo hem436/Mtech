@@ -1,7 +1,7 @@
 /*
  * CS:APP Data Lab
  *
- * <Shekhar Mohanty Hement>
+ * <Shekhar Mohanty Hement, 25210122>
  *
  * bits.c - Source file with your solutions to the Lab.
  *          This is the file you will hand in to your instructor.
@@ -162,10 +162,10 @@ long isNotEqual(long x, long y) {
  *   Rating: 2
  */
 long dividePower2(long x, long n) {
-    long sign=x>>63;
-    long negative = (~((~(x+1)>>n))+1);
-    printf("%ld\n",negative);
-    return (sign&negative)|((~sign)&(x>>n));
+    // long sign=x>>63;
+    // long bias=(1L<<n)+~0L;
+    // bias=bias&sign;
+    return (x)>>n;
 }
 // 3
 /*

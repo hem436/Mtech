@@ -1,0 +1,37 @@
+Name: Shekhar Mohanty Hemant ,Roll: 25210122
+# part 1
+
+1.Fill in the contents of the top two elements of the stack and the value of $rsp. 
+Ans: Top two elements - 0x0000000000015213      0x000000000040117a
+
+2.What was the meaning of the second number on the stack?
+Ans: The second argument is the return address for caller's function.
+
+3.What does the ret instruction do?
+Ans: returns from the current procedure call and pops the return address 0x40117a from the top of callee stack to rip, and transferring the control to the parent procedure.
+
+4.Given your answer to 3, what must it be that call does?
+Ans: Call instruction is responsible to store the next instruction address to the top of the stack as return address and then passes the execution control to callee function.
+
+5.What special optimization of calls has been applied to returnOneOpt? Why does this optimization work for returnOneOpt? Can it be used for any call?
+Ans: Its using jmp instrucion to call the function <abs> instead of using call instruction, because there are no further instrucions in this program, so saving call stack is not required.
+No, it cannot be used for all types of function because the caller may want to perform more than one procedure and return address is not saved.
+
+# part 2
+
+1.What is the type of the data seeArgs passes as the first argument to printf? Given this, and what you saw when you followed the instructions up to this point, what does the GDB command x/s do?
+Ans: Its a memory address 0x402016 containing formatted string "%d %d %d %d %d" for the printf function to print next 5 arguments. x/s commands prints the string in the specified memory address.
+
+2.When seeMoreArgs calls printf, where did the compiler place arguments 7 and 8? Why do you think this happened?
+Ans: Its pushing 7th and 8th arguments to stack because the compiler has filled the six registers(edi,esi,edx,ecx,r8,r8) with first 6 arguments and cannot pass more arguments through registers.
+
+3.Where does the function getV allocate its array? How does it pass this location to getValue?
+Ans: It is present in stack space where the integers are saved, it passes the address of array through register %rdi which is 24 byte offset from current stack pointer (%rsp) and index to array to get value of to %rsi.
+
+4.Which registers are treated as call-preserved by mult4? Which register does mult4 expect to contain a return value? (It may help to disassemble mult2 as well.)
+Ans: register treated as call-preserved are %r12,%r13. Register %eax contains the return value.
+
+5.What does the function mrec do?
+Ans: It computes the factorial of a number x.
+
+
