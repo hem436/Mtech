@@ -162,10 +162,10 @@ long isNotEqual(long x, long y) {
  *   Rating: 2
  */
 long dividePower2(long x, long n) {
-    // long sign=x>>63;
-    // long bias=(1L<<n)+~0L;
-    // bias=bias&sign;
-    return (x)>>n;
+    long sign=x>>63;
+    long bias=(1L<<n)+~0L;
+    bias=bias&sign;
+    return (x+bias)>>n;
 }
 // 3
 /*
@@ -177,7 +177,10 @@ long dividePower2(long x, long n) {
  *   Rating: 3
  */
 long remainderPower2(long x, long n) {
-    return 3L;
+    long mask=(1L<<n)+~0L;
+    long div = (!(x&mask))+~0L; // check if x is divisible by 2^n gives 0L if divisible else -1L
+    long sign=x>>63;
+    return ((sign&div&(x|~mask))) + ((~sign)&x&mask);
 }
 /*
  * rotateLeft - Rotate x to the left by n
@@ -189,7 +192,9 @@ long remainderPower2(long x, long n) {
  *   Rating: 3
  */
 long rotateLeft(long x, long n) {
-    return 2;
+    long mask = ~((1L<<(64-n))+~0L);
+    long digit = (( x & mask )>>( 64 - n )) & ((1L<<n)+~0L);
+    return (x<<n)|digit;
 }
 /*
  * bitMask - Generate a mask consisting of all 1's

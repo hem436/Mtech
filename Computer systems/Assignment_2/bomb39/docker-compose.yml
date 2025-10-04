@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  bomb-lab:
+    build: .
+    image: bomb39
+    container_name: bomb39-container
+    volumes:
+      # Mount the current directory to preserve any solution files
+      - .:/bomb
+    working_dir: /bomb
+    stdin_open: true
+    tty: true
+    # Keep container running
+    command: tail -f /dev/null
