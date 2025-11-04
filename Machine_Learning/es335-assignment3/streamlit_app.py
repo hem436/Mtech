@@ -1374,8 +1374,11 @@ if __name__ == "__main__":
     # if unstruct_model directory not exists, download from hugging face
     if(not (BASE_DIR / "unstruct_model").exists()):
         import subprocess
-        subprocess.run(["git","lfs","install"])
-        subprocess.run(["git", "clone", "https://huggingface.co/hem436/ntp_unstruct_emb32_hidden1_relu", str(BASE_DIR / "unstruct_model")])
-        print(os.listdir(BASE_DIR))
+        result = subprocess.run(["git","lfs","install"])
+        print(f"Stdout: {result.stdout}")
+        print(f"Stderr: {result.stderr}")
+        result = subprocess.run(["git", "clone", "https://huggingface.co/hem436/ntp_unstruct_emb32_hidden1_relu", str(BASE_DIR / "unstruct_model")])
+        print(f"Stdout: {result.stdout}")
+        print(f"Stderr: {result.stderr}")
 
     main()
