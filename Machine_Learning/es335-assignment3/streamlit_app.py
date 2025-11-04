@@ -32,7 +32,13 @@ import streamlit as st
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.manifold import TSNE
 import plotly.graph_objects as go
+from pathlib import Path
 
+BASE_DIR = Path(__file__).resolve().parent
+# if unstruct_model directory not exists, download from hugging face
+if(not (BASE_DIR / "unstruct_model").exists()):
+    import subprocess
+    subprocess.run(["git", "clone", "https://huggingface.co/hem436/ntp_unstruct_emb32_hidden1_relu", str(BASE_DIR / "unstruct_model")])
 # =============================================================================
 # MODEL ARCHITECTURE
 # =============================================================================
@@ -462,7 +468,7 @@ def load_model(
     Returns:
         Loaded model or None if not found
     """
-    base_path = './struct_model' if category == 'structured' else './unstruct_model'
+    base_path = BASE_DIR / "struct_model" if category == 'structured' else BASE_DIR / "unstruct_model"
     
     model_name = f'emb{embedding_dim}_hidden{hidden_layers}_{activation}'
     model_path = f'{base_path}/{model_name}.pth'
@@ -611,7 +617,7 @@ def visualize_loss_curves_comparison(
     
     # Load loss data for all selected models
     loss_data = {}
-    base_path = './struct_model' if category_key == 'structured' else './unstruct_model'
+    base_path = BASE_DIR / "struct_model" if category_key == 'structured' else BASE_DIR / "unstruct_model"
     
     for model_name in selected_models:
         loss_file = f"{base_path}/{model_name}_loss.pth"
