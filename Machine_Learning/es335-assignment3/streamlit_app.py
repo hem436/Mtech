@@ -34,11 +34,6 @@ from sklearn.manifold import TSNE
 import plotly.graph_objects as go
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent
-# if unstruct_model directory not exists, download from hugging face
-if(not (BASE_DIR / "unstruct_model").exists()):
-    import subprocess
-    subprocess.run(["git", "clone", "https://huggingface.co/hem436/ntp_unstruct_emb32_hidden1_relu", str(BASE_DIR / "unstruct_model")])
 # =============================================================================
 # MODEL ARCHITECTURE
 # =============================================================================
@@ -496,7 +491,7 @@ def load_model(
         model.load_state_dict(checkpoint['model_state_dict'])
         return model
     except Exception as e:
-        st.error(f"Error loading model: {e}")
+        st.error(f"Error loading model: {e} {model_path}")
         import traceback
         traceback.print_exc()
         return None
@@ -1098,39 +1093,39 @@ def main():
         # Define available HTML visualizations
         html_files = {
             "Elbow Curve": {
-                "file": "elbow_curve.html",
+                "file": BASE_DIR / "elbow_curve.html",
                 "description": "Elbow method for determining optimal number of clusters"
             },
             "PCA Variance Explained": {
-                "file": "pca_variance_explained.html",
+                "file": BASE_DIR / "pca_variance_explained.html",
                 "description": "PCA analysis showing variance explained by principal components"
             },
             "t-SNE Best model for category 1": {
-                "file": "tsne_embeddings_2d.html",
+                "file": BASE_DIR / "tsne_embeddings_2d.html",
                 "description": "2D t-SNE visualization of all word embeddings"
             },
             "t-SNE Best model for category 2": {
-                "file": "tsne_embeddings_2d_struct.html",
+                "file": BASE_DIR / "tsne_embeddings_2d_struct.html",
                 "description": "2D t-SNE visualization for structured text model"
             },
             "t-SNE Clustered": {
-                "file": "tsne_clustered_detailed.html",
+                "file": BASE_DIR / "tsne_clustered_detailed.html",
                 "description": "Detailed t-SNE visualization with cluster annotations"
             },
             "t-SNE Clustered (Structured)": {
-                "file": "tsne_clustered_struct.html",
+                "file": BASE_DIR / "tsne_clustered_struct.html",
                 "description": "t-SNE clustering visualization for structured text"
             },
             "t-SNE comparison across models cat 1": {
-                "file": "tsne_clustered_comparison.html",
+                "file": BASE_DIR / "tsne_clustered_comparison.html",
                 "description": "Side-by-side comparison of clustered embeddings"
             },
             "t-SNE comparison across models cat 2": {
-                "file": "tsne_clustered_struct_comparison.html",
+                "file": BASE_DIR / "tsne_clustered_struct_comparison.html",
                 "description": "Comparison of structured text embedding clusters"
             },
             "t-SNE Struct Embedding Comparison": {
-                "file": "tsne_embeddings_struct_comparison.html",
+                "file": BASE_DIR / "tsne_embeddings_struct_comparison.html",
                 "description": "Comparison of structured text embeddings"
             }
         }
@@ -1375,4 +1370,10 @@ def main():
 
 
 if __name__ == "__main__":
+    BASE_DIR = Path(__file__).resolve().parent
+    # if unstruct_model directory not exists, download from hugging face
+    if(not (BASE_DIR / "unstruct_model").exists()):
+        import subprocess
+        subprocess.run(["git", "clone", "https://huggingface.co/hem436/ntp_unstruct_emb32_hidden1_relu", str(BASE_DIR / "unstruct_model")])
+
     main()
